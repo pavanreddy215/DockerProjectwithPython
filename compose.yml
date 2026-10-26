@@ -1,60 +1,60 @@
----
-services:
+version: '3.8'
+services: 
   db:
-    image: shaikmustafa/arshad:db
-    deploy:
-      replicas: 1
+    image: pavanreddy215/library:db
     ports:
       - "3306:3306"
+    deploy:
+      replicas: 1
     networks:
       - mynetwork
 
   auth_service:
-    image: shaikmustafa/arshad:auth
-    deploy:
-      replicas: 1
+    image: pavanreddy215/library:auth
     ports:
       - "5001:5001"
-    networks:
-      - mynetwork
+    deploy:
+      replicas: 1
     depends_on:
       - db
-    
+    networks:
+      - mynetwork
 
   book_service:
-    image: shaikmustafa/arshad:book
-    deploy:
-      replicas: 1
+    image: pavanreddy215/library:book
     ports:
       - "5002:5002"
-    networks:
-      - mynetwork
-    depends_on:
-      - db
-  borrow_service:
-    image: shaikmustafa/arshad:borrow
     deploy:
       replicas: 1
+    depends_on:
+      - db
+    networks:
+      - mynetwork
+  
+  borrow_service:
+    image: pavanreddy215/library:borrow
     ports:
       - "5003:5003"
-    networks:
-      - mynetwork
-    depends_on:
-      - db
-
-  frontend:
-    image: shaikmustafa/arshad:frontend
     deploy:
       replicas: 1
-    ports:
-      - "5000:5000"
+    depends_on:
+      - db
     networks:
       - mynetwork
+  
+  frontend:
+    image: pavanreddy215/library:frontend
+    ports:
+      - "5000:5000"
+    deploy:
+      replicas: 1
     depends_on:
       - auth_service
       - book_service
       - borrow_service
+    networks:
+      - mynetwork
 
 networks:
   mynetwork:
-    driver: bridge
+    driver: overlay
